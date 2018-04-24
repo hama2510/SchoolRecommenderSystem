@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Trang quản trị</title>
+    <h:outputStylesheet library="css" name="custom-primefaces.css"/>
+    <h:outputStylesheet library="css" name="add-job.css"/>
+</h:head>
+<h:body>
+    <ui:composition template="/template/admin-template.xhtml">
+        <ui:define name="content">
+            <h:form id="form">
+                <p:growl id="msg" showDetail="true" sticky="true"/>
+                <p:panelGrid columns="2" id="job">
+                    <h:outputLabel for="name" value="Tên nghề"/>
+                    <p:inputText id="name" value="#{editJobBean.job.name}"/>
+
+                    <h:outputLabel for="upload" value="Ảnh của nghề"/>
+                    <p:fileUpload id="upload" mode="advanced" dragDropSupport="false"
+                                  multiple="true" sizeLimit="1000000"
+                                  fileLimit="10" allowTypes="/(\.|\/)(jpe?g|png)$/"
+                                  fileUploadListener="#{editJobBean.uploadImage}"/>
+
+                    <h:outputLabel for="group" value="Nhóm ngành nghề"/>
+                    <p:selectOneMenu id="group" value="#{editJobBean.job.career}" style="width:250px">
+                        <f:selectItems value="#{editJobBean.careers}" var="career" itemLabel="#{career}"
+                                       itemValue="#{career}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputLabel for="requirements" value="Phẩm chất nghề"/>
+                    <p:tree id="requirements" value="#{editJobBean.groupTree}" var="group"
+                            selectionMode="checkbox"
+                            selection="#{editJobBean.selectedNodes}" styleClass="tree"
+                    >
+                        <p:treeNode>
+                            <h:outputText value="#{group.name}"/>
+                        </p:treeNode>
+                    </p:tree>
+                    <h:outputLabel for="description" value="Mô tả nghề"/>
+                    <p:textEditor id="description" value="#{editJobBean.job.description}"/>
+                </p:panelGrid>
+                <p:commandButton value="Sửa" actionListener="#{editJobBean.editJob}"
+                                 update=":form:msg :form:job"
+                />
+                <br/>
+                <p:panelGrid columns="1">
+                    <p:commandButton value="Ánh xạ môn học" actionListener="#{editJobBean.getAutoSuggestion}"
+                                     update=":form:modal-panel" process="@this"/>
+                    <p:dialog header="Modal Dialog" widgetVar="add-subject" modal="false" height="300" width="800">
+                        <p:panelGrid columns="2" id="modal-panel">
+                            <h:outputLabel for="subjectType" value="Loại"/>
+                            <p:selectOneMenu id="subjectType" value="#{editJobBean.selectedType}">
+                                <p:ajax event="change" listener="#{editJobBean.subjectTypeSelectionChanged}"
+                                        update=":form:modal-panel"/>
+                                <f:selectItems value="#{editJobBean.subjectTypes}" var="career" itemLabel="#{career}"
+                                               itemValue="#{career}"/>
+                            </p:selectOneMenu>
+                            <h:outputLabel for="subjectName" value="Môn học"/>
+                            <p:autoComplete id="subjectName" value="#{editJobBean.selectedName}"
+                                            completeMethod="#{editJobBean.subjectSuggestion}" scrollHeight="200"/>
+                            <h:outputLabel for="suggestion" value="Gợi ý"/>
+                            <p:dataTable id="suggestion"
+                                         value="#{editJobBean.suggestionSubjects}"
+                                         var="subject"
+                                         rows="5"
+                                         paginator="true"
+                                         paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                                         paginatorPosition="bottom"
+                                         lazy="true"
+                                         selection="#{editJobBean.selectedSuggestionSubject}"
+                                         selectionMode="single"
+                            >
+                                <p:column>
+                                    <h:outputText value="#{subject.name}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panelGrid>
+                        <p:contextMenu for=":form:suggestion">
+                            <p:menuitem value="Thêm" update=":form:subject-table :form:msg :form:modal-panel"
+                                        icon="fa fa-plus"
+                                        actionListener="#{editJobBean.quickAdd}">
+                            </p:menuitem>
+                        </p:contextMenu>
+                        <p:commandButton value="Ánh xạ môn học cho nghề" actionListener="#{editJobBean.mapSubject}"
+                                         update=":form:msg :form:subject-table"/>
+                    </p:dialog>
+                </p:panelGrid>
+                <h:outputLabel for="subject-table" value="Danh sách môn học tương ứng"/>
+                <p:dataTable id="subject-table"
+                             value="#{editJobBean.subjectDataModel}"
+                             var="subject" binding="#{table}"
+                             rows="10"
+                             paginator="true"
+                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                             paginatorPosition="bottom"
+                             selection="#{editJobBean.selectedSubject}"
+                             lazy="true"
+                             selectionMode="single">
+                    <p:column>
+                        <f:facet name="header">STT</f:facet>
+                        #{table.rowIndex+1}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Tên môn học</f:facet>
+                        #{subject.name}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Loại</f:facet>
+                        #{subject.type}
+                    </p:column>
+                </p:dataTable>
+                <p:contextMenu for=":form:subject-table">
+                    <p:menuitem value="Xóa" update=":form:subject-table :form:msg" icon="fa fa-close"
+                                actionListener="#{editJobBean.deleteSubject}">
+                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                    </p:menuitem>
+                </p:contextMenu>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                </p:confirmDialog>
+
+                <br/>
+                <p:panelGrid columns="1">
+                    <p:commandButton value="Gắn tag"
+                                     update=":form:tag-modal-panel" onclick="PF('add-tag').show();"/>
+                    <p:dialog header="Thêm tag" widgetVar="add-tag" modal="false" height="300" width="800">
+                        <p:panelGrid columns="2" id="tag-modal-panel">
+                            <h:outputLabel for="tagName" value="Môn học"/>
+                            <p:autoComplete id="tagName" value="#{editJobBean.selectedTagName}"
+                                            completeMethod="#{editJobBean.tagSuggestion}" scrollHeight="200"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Gắn tag cho nghề" actionListener="#{editJobBean.mapTag}"
+                                         update=":form:msg :form:tag-table"/>
+                    </p:dialog>
+                </p:panelGrid>
+                <h:outputLabel for="subject-table" value="Danh sách môn học tương ứng"/>
+                <p:dataTable id="tag-table"
+                             value="#{editJobBean.tagDataModel}"
+                             var="tag" binding="#{tagTable}"
+                             rows="10"
+                             paginator="true"
+                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                             paginatorPosition="bottom"
+                             selection="#{editJobBean.selectedTag}"
+                             lazy="true"
+                             selectionMode="single">
+                    <p:column>
+                        <f:facet name="header">STT</f:facet>
+                        #{tagTable.rowIndex+1}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Tag</f:facet>
+                        #{tag.name}
+                    </p:column>
+                </p:dataTable>
+                <p:contextMenu for=":form:tag-table">
+                    <p:menuitem value="Xóa" update=":form:tag-table :form:msg" icon="fa fa-close"
+                                actionListener="#{editJobBean.deleteTag}">
+                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                    </p:menuitem>
+                </p:contextMenu>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                </p:confirmDialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

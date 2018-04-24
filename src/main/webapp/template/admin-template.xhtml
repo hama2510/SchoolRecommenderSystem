@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+    <title>Trang chủ</title>
+    <h:outputStylesheet library="css" name="custom-primefaces.css"/>
+    <h:outputStylesheet library="css" name="home-page.css"/>
+</h:head>
+<h:body>
+    <p:layout fullPage="true">
+        <p:layoutUnit position="north">
+            <p:menubar styleClass="top-menu">
+                <p:menuitem value="Trang chủ" url="/admin"/>
+                <p:menuitem value="Đăng xuất" url="/logout"/>
+            </p:menubar>
+        </p:layoutUnit>
+        <p:layoutUnit position="center">
+            <ui:insert name="content">
+            </ui:insert>
+        </p:layoutUnit>
+    </p:layout>
+</h:body>
+</html>
+

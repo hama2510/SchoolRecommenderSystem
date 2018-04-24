@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">>
+<h:head>
+    <title>Tư vấn chọn nghề</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/home-template.xhtml">
+        <ui:define name="content">
+            <h:form prependId="false">
+                <h3>Tư vấn chọn trường cho #{schoolRecommendationBean.job.name}</h3>
+                <p:panelGrid columns="2">
+                    <h:outputLabel>Hiện tại bạn đang ở</h:outputLabel>
+                    <p:selectOneMenu style="width:250px">
+                        <f:selectItem itemLabel="" noSelectionOption="false"/>
+                        <f:selectItems value="#{schoolRecommendationBean.provinces}" itemLabel="#{province}"
+                                       itemValue="#{province}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputLabel value="Trình độ học vấn"/>
+                    <p:selectOneRadio>
+                        <f:selectItem itemLabel="Tốt nghiệp trung học cơ sở" itemValue="THCS"/>
+                        <f:selectItem itemLabel="Tốt nghiệp trung học phổ thông" itemValue="THPT"/>
+                        <f:selectItem itemLabel="Chưa có trình độ học vấn" itemValue="0"/>
+                    </p:selectOneRadio>
+
+                    <h:outputLabel value="Khoảng thời gian học mong muốn"/>
+                    <p:selectOneRadio>
+                        <f:selectItem itemLabel="Từ 3-6 tháng" itemValue="3"/>
+                        <f:selectItem itemLabel="6 tháng đến 1 năm" itemValue="6"/>
+                        <f:selectItem itemLabel="Trên 1 năm" itemValue="12"/>
+                        <f:selectItem itemLabel="Không có yêu cầu" itemValue="0"/>
+                    </p:selectOneRadio>
+
+                    <h:outputLabel value="Khả năng chi trả học phí mỗi tháng (nghìn đồng)"/>
+                    <p:selectOneRadio>
+                        <f:selectItem itemLabel="300 - 500" itemValue="3"/>
+                        <f:selectItem itemLabel="500 - 1 triệu" itemValue="3"/>
+                        <f:selectItem itemLabel="Trên 1 triệu" itemValue="3"/>
+                    </p:selectOneRadio>
+                </p:panelGrid>
+                <p:commandButton value="Nhận tư vấn" actionListener="#{schoolRecommendationBean.recommendSchool}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

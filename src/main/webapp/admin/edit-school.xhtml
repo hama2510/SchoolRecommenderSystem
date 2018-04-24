@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Trang quản trị</title>
+    <h:outputStylesheet library="css" name="custom-primefaces.css"/>
+</h:head>
+<h:body>
+    <ui:composition template="/template/admin-template.xhtml">
+        <ui:define name="content">
+            <h:form id="form">
+                <p:growl id="msg" showDetail="true" sticky="true" life="5000"/>
+                <h:outputLabel>Form cập nhật trường nghề</h:outputLabel>
+                <p:panelGrid id="panel" columns="2">
+                    <h:outputLabel>Tên trường</h:outputLabel>
+                    <p:inputText id="name" value="#{editSchoolBean.school.name}"/>
+                    <h:outputLabel>Website</h:outputLabel>
+                    <p:inputText id="website" value="#{editSchoolBean.school.website}"/>
+                    <h:outputLabel>Email</h:outputLabel>
+                    <p:inputText id="email" value="#{editSchoolBean.school.email}"/>
+                </p:panelGrid>
+                <p:panelGrid columns="1">
+                    <h2>Danh sách cơ sở dạy</h2>
+                    <p:commandButton value="Thêm cơ sở dạy" type="button" onclick="PF('add-agency').show();"/>
+                    <p:dialog header="Thêm cơ sở dạy" widgetVar="add-agency" modal="false" height="300" width="500">
+                        <p:panelGrid columns="2">
+                            <h:outputLabel>Tỉnh thành</h:outputLabel>
+                            <p:selectOneMenu value="#{editSchoolBean.agency.province}" style="width:250px">
+                                <f:selectItems value="#{editSchoolBean.provinces}" var="province"
+                                               itemLabel="#{province.name}"
+                                               itemValue="#{province.name}"/>
+                            </p:selectOneMenu>
+                            <h:outputLabel>Địa chỉ</h:outputLabel>
+                            <p:inputText id="address" value="#{editSchoolBean.agency.address}"/>
+                            <h:outputLabel>Số điện thoại</h:outputLabel>
+                            <p:inputText id="phone" value="#{editSchoolBean.agency.phone}"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Thêm" actionListener="#{editSchoolBean.addAgency}"
+                                         update=":form:msg :form:agency-table"/>
+                    </p:dialog>
+                </p:panelGrid>
+                <p:dataTable id="agency-table"
+                             value="#{editSchoolBean.agencyModel}"
+                             var="agency" binding="#{table1}"
+                             rows="10"
+                             paginator="true"
+                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                             paginatorPosition="bottom"
+                             lazy="true"
+                             selectionMode="single"
+                             selection="#{editSchoolBean.selectedAgency}"
+                >
+                    <p:column>
+                        <f:facet name="header">STT</f:facet>
+                        #{table1.rowIndex+1}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Địa chỉ</f:facet>
+                        #{agency.address}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Số điện thoại</f:facet>
+                        #{agency.phone}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Tỉnh/Thành phố</f:facet>
+                        #{agency.province}
+                    </p:column>
+                </p:dataTable>
+                <p:contextMenu for=":form:agency-table">
+                    <p:menuitem value="Xóa" update=":form:agency-table :form:msg" icon="fa fa-close"
+                                actionListener="#{editSchoolBean.deleteAgency}">
+                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                    </p:menuitem>
+                </p:contextMenu>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                </p:confirmDialog>
+
+                <p:panelGrid columns="1">
+                    <h2>Danh sách nghề trường dạy</h2>
+                    <p:commandButton value="Thêm môn học" onclick="PF('add-school-job').show();"/>
+                    <p:dialog header="Modal Dialog" widgetVar="add-school-job" modal="false" height="300" width="500">
+                        <p:panelGrid columns="2" id="modal-panel">
+                            <h:outputLabel value="Loại"/>
+                            <p:selectOneMenu value="#{editSchoolBean.selectedType}">
+                                <p:ajax event="change" listener="#{editSchoolBean.subjectTypeSelectionChanged}"
+                                        update=":form:modal-panel"/>
+                                <f:selectItems value="#{editSchoolBean.subjectTypes}" var="career" itemLabel="#{career}"
+                                               itemValue="#{career}"/>
+                            </p:selectOneMenu>
+                            <h:outputLabel>Môn học</h:outputLabel>
+                            <p:autoComplete value="#{editSchoolBean.selectedName}"
+                                            completeMethod="#{editSchoolBean.subjectSuggestion}" scrollHeight="200"/>
+                            <h:outputLabel value="Tổng thời gian khóa học (tháng)"/>
+                            <p:inputNumber value="#{editSchoolBean.schoolSubjectReg.period}"
+                                           decimalPlaces="0" thousandSeparator=""/>
+                            <h:outputLabel value="Học phí cho toàn khóa học"/>
+                            <p:inputNumber value="#{editSchoolBean.schoolSubjectReg.cost}"
+                                           decimalPlaces="0" thousandSeparator=","/>
+                        </p:panelGrid>
+                        <p:commandButton value="Thêm môn học cho trường"
+                                         actionListener="#{editSchoolBean.addSubjectToSchool}"
+                                         update=":form:msg :form:job-table"/>
+                    </p:dialog>
+                </p:panelGrid>
+
+                <p:dataTable id="job-table"
+                             value="#{editSchoolBean.schoolSubjectDataModel}"
+                             var="schoolJob" binding="#{table2}"
+                             rows="10"
+                             paginator="true"
+                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                             paginatorPosition="bottom"
+                             lazy="true"
+                             selectionMode="single" selection="#{editSchoolBean.selectedSubject}">
+                    <p:column>
+                        <f:facet name="header">STT</f:facet>
+                        #{table2.rowIndex+1}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Tên môn học</f:facet>
+                        #{schoolJob.subject.name}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Loại</f:facet>
+                        #{schoolJob.type}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Thời gian học</f:facet>
+                        #{schoolJob.period}
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">Học phí</f:facet>
+                        #{schoolJob.cost}
+                    </p:column>
+                </p:dataTable>
+                <p:contextMenu for=":form:job-table">
+                    <p:menuitem value="Xóa" update=":form:job-table :form:msg" icon="fa fa-close"
+                                actionListener="#{editSchoolBean.deleteSubject}">
+                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                    </p:menuitem>
+                </p:contextMenu>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                </p:confirmDialog>
+                <p:commandButton value="Cập nhật" actionListener="#{editSchoolBean.update}"
+                                 update=":form:msg :form:panel"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

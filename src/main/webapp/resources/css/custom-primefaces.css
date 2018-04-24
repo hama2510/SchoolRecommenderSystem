@@ -1,0 +1,42 @@
+body{
+    padding: 0px !important;
+    margin: 0px !important;
+}
+.ui-layout-container{
+    margin: 0px !important;
+}
+.ui-layout-north {
+    border: none !important;
+    overflow:visible !important;
+    margin-bottom: 0px !important;
+    padding-bottom: 0px!important;
+}
+.ui-layout-center {
+    border: none !important;
+    overflow:visible !important;
+}
+.ui-layout-south {
+    border: none !important;
+    overflow:visible !important;
+}
+.ui-layout-west {
+    border: none !important;
+    overflow:visible !important;
+}
+.ui-layout-east {
+    border: none !important;
+    overflow:visible !important;
+}
+.ui-layout-north .ui-layout-unit-content {
+    border: none !important;
+    overflow:visible !important;
+}
+.ui-menuitem-link:hover{
+    background-color:  transparent !important;
+}
+.ui-panelgrid td, .ui-panelgrid tr {
+    border: none !important;
+}
+.ui-panel {
+    border: none !important;
+}

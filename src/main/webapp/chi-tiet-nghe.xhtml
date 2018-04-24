@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+    <title>Thông tin nghề</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/home-template.xhtml">
+        <ui:define name="content">
+            <h:outputText value="#{viewJobBean.job.name}"/>
+            <p:tabView>
+                <p:tab title="Giới thiệu">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText escape="false"
+                                      value="#{viewJobBean.job.description}"/>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="Yêu cầu của nghề">
+                    <p:outputLabel>#{viewJobBean.job.name} yêu cầu:</p:outputLabel>
+                    <br/>
+                    <p:dataList value="#{viewJobBean.job.requirements}" var="requirement" type="ordered">
+                       #{requirement.group}: #{requirement.name}
+                    </p:dataList>
+                </p:tab>
+                <p:tab title="Các trường dạy nghề này">
+                    <p:outputLabel>Các trường trung cấp dạy nghề #{viewJobBean.job.name}</p:outputLabel>
+                    <p:dataList value="#{viewJobBean.job.schools}" var="school" type="ordered">
+                        <p:link value="#{school.name}" outcome="/chi-tiet-truong.xhtml">
+                            <f:param name="id" value="#{school.id}"/>
+                        </p:link>
+                    </p:dataList>
+                </p:tab>
+            </p:tabView>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
+

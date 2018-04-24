@@ -1,0 +1,15 @@
+.layout-unit{
+    height: 600px !important;
+}
+.panel-list{
+    padding: 0px !important;
+}
+.panel-list .ui-panel-content, .ui-widget-content {
+    padding: 0px !important;
+}
+#option-panel{
+    padding: 0px !important;
+}
+.table-data{
+    padding: 0px !important;
+}

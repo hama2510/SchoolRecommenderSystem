@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+    <title>Danh sách nghề</title>
+</h:head>
+<h:body>
+    <ui:composition template="/template/home-template.xhtml">
+        <ui:define name="content">
+            <h:form id="form">
+                <h:outputText id="message" value="#{searchJobBean.message}"/>
+                <p:dataGrid id="job-table"
+                            value="#{searchSchoolBean.schools}"
+                            var="school"
+                            columns="2"
+                            rows="6"
+                            paginator="true"
+                            paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                            paginatorPosition="bottom"
+                            lazy="true"
+                            layout="grid"
+                >
+                    <p:panelGrid columns="1">
+                        <h:outputText value="#{school.name}"/>
+                        <h:outputLabel value="#{school.website}"/>
+                        <p:link value="Xem chi tiết" outcome="/chi-tiet-truong.xhtml">
+                            <f:param name="id" value="#{school.id}"/>
+                        </p:link>
+                    </p:panelGrid>
+                </p:dataGrid>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

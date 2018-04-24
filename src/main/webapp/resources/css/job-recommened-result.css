@@ -1,0 +1,22 @@
+body{
+    padding: 0px !important;
+    margin: 0px !important;
+}
+.ui-menuitem-link:hover{
+    background-color:  transparent !important;
+}
+.panel-content tr{
+    width: 100%;
+}
+.panel-content td, .panel-content tr {
+    border: none !important;
+}
+.ui-panel {
+    border: none !important;
+}
+#form\:job-table_content{
+    border: none !important;
+}
+.item{
+    width: 100%;
+}

@@ -1,0 +1,335 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+    <title>Trang quản trị</title>
+    <h:outputStylesheet library="css" name="custom-primefaces.css"/>
+    <h:outputStylesheet library="css" name="admin-page.css"/>
+</h:head>
+<h:body>
+    <ui:composition template="/template/admin-template.xhtml">
+        <ui:define name="content">
+            <p:layout styleClass="ui-noborder layout">
+                <p:layoutUnit position="west" styleClass="layout-unit">
+                    <h:form id="left-form">
+                        <p:panelMenu>
+                            <p:submenu label="Quản lý trường nghề">
+                                <p:menuitem value="Danh sách" icon="fa fa-list"
+                                            actionListener="#{adminBean.setView(adminBean.SCHOOL)}"
+                                            update="option-panel"/>
+                                <p:menuitem value="Thêm mới" outcome="/admin/add-school.xhtml" icon="ui-icon-plus"/>
+                            </p:submenu>
+                            <p:submenu label="Quản lý môn học">
+                                <p:menuitem value="Danh sách" icon="fa fa-list"
+                                            actionListener="#{adminBean.setView(adminBean.SUBJECT)}"
+                                            update="option-panel"/>
+                                <p:menuitem value="Thêm mới" outcome="/admin/add-subject.xhtml" icon="ui-icon-plus"/>
+                            </p:submenu>
+                            <p:submenu label="Quản lý nghề">
+                                <p:menuitem value="Danh sách" icon="fa fa-list"
+                                            actionListener="#{adminBean.setView(adminBean.JOB)}"
+                                            update="option-panel"/>
+                                <p:menuitem value="Thêm nghề" outcome="/admin/add-job.xhtml" icon="fa fa-plus"/>
+                            </p:submenu>
+                            <p:submenu label="Quản lý tag">
+                                <p:menuitem value="Danh sách" icon="fa fa-list"
+                                            actionListener="#{adminBean.setView(adminBean.TAG)}"
+                                            update="option-panel"/>
+                                <p:menuitem value="Thêm tag" outcome="/admin/add-tag.xhtml" icon="fa fa-plus"/>
+                            </p:submenu>
+                            <p:submenu label="Quản lý phẩm chất nghề">
+                                <p:menuitem value="Danh sách" icon="fa fa-list"
+                                            actionListener="#{adminBean.setView(adminBean.JOB_REQUIREMENT)}"
+                                            update="option-panel"/>
+                                <p:menuitem value="Thêm mới" outcome="/admin/add-job-requirement.xhtml"
+                                            icon="ui-icon-plus"/>
+                            </p:submenu>
+                            <p:submenu label="Quản lý nhóm phẩm chất nghề">
+                                <p:menuitem value="Danh sách" icon="fa fa-list"
+                                            actionListener="#{adminBean.setView(adminBean.REQUIREMENT_GROUP)}"
+                                            update="option-panel"/>
+                                <p:menuitem value="Sắp xếp thứ tự" icon="fa fa-list"
+                                            outcome="/admin/order-group.xhtml"/>
+                                <p:menuitem value="Thêm mới" outcome="/admin/add-requirement-group.xhtml"
+                                            icon="ui-icon-plus"/>
+                            </p:submenu>
+
+                        </p:panelMenu>
+                    </h:form>
+                </p:layoutUnit>
+                <p:layoutUnit position="center" styleClass="layout-unit">
+                    <p:panel id="option-panel" styleClass="ui-noborder">
+                        <h:form id="form">
+                            <p:growl id="message" showDetail="true"/>
+                            <p:panel rendered="#{adminBean.selectedMenu == adminBean.SCHOOL}" styleClass="panel-list">
+                                <!--<ui:include src="job-table.xhtml"/>-->
+                                <p:dataTable id="school-table"
+                                             value="#{adminBean.schoolDataModel}"
+                                             var="school" binding="#{schoolTable}"
+                                             rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                                             paginatorPosition="bottom"
+                                             lazy="true"
+                                             selection="#{adminBean.selectedSchool}"
+                                             selectionMode="single"
+                                             styleClass="table-data"
+                                >
+                                    <p:column>
+                                        <f:facet name="header">STT</f:facet>
+                                        #{schoolTable.rowIndex+1}
+                                    </p:column>
+                                    <p:column filterBy="#{school.name}">
+                                        <f:facet name="header">Tên trường</f:facet>
+                                        #{school.name}
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">Website</f:facet>
+                                        #{school.website}
+                                    </p:column>
+                                </p:dataTable>
+                                <p:contextMenu for=":form:school-table">
+                                    <p:menuitem value="Sửa" icon="fa fa-pencil"
+                                                actionListener="#{adminBean.changeToUpdateSchoolPage}">
+                                    </p:menuitem>
+                                    <p:menuitem value="Xóa" update=":form:school-table :form:message" icon="fa fa-close"
+                                                actionListener="#{adminBean.deleteSchool}">
+                                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                                    </p:menuitem>
+                                </p:contextMenu>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                                </p:confirmDialog>
+                            </p:panel>
+                            <p:panel rendered="#{adminBean.selectedMenu == adminBean.SUBJECT}" styleClass="panel-list">
+                                <p:dataTable id="subject-table"
+                                             value="#{adminBean.subjectModel}"
+                                             var="subject" binding="#{table5}"
+                                             rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                                             paginatorPosition="bottom"
+                                             lazy="true"
+                                             selection="#{adminBean.selectedSubject}"
+                                             selectionMode="single"
+                                             styleClass="table-data"
+                                >
+                                    <p:column>
+                                        <f:facet name="header">STT</f:facet>
+                                        #{table5.rowIndex+1}
+                                    </p:column>
+                                    <p:column filterBy="#{subject.type}">
+                                        <f:facet name="header">Cấp độ</f:facet>
+                                        #{subject.type}
+                                    </p:column>
+                                    <p:column sortBy="#{subject.group}" sortable="true" filterBy="#{subject.group}">
+                                        <f:facet name="header">Nhóm</f:facet>
+                                        #{subject.group}
+                                    </p:column>
+                                    <p:column filterBy="#{subject.name}">
+                                        <f:facet name="header">Tên môn học</f:facet>
+                                        #{subject.name}
+                                    </p:column>
+                                </p:dataTable>
+                                <p:contextMenu for=":form:subject-table">
+                                    <p:menuitem value="Xóa" update=":form:subject-table :form:message"
+                                                icon="fa fa-close"
+                                                actionListener="#{adminBean.deleteSubject}">
+                                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                                    </p:menuitem>
+                                </p:contextMenu>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                                </p:confirmDialog>
+                            </p:panel>
+                            <p:panel rendered="#{adminBean.selectedMenu == adminBean.JOB}" styleClass="panel-list">
+                                <p:dataTable id="job-table"
+                                             value="#{adminBean.jobModel}"
+                                             var="job" binding="#{jobTable}"
+                                             rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                                             paginatorPosition="bottom"
+                                             lazy="true"
+                                             selection="#{adminBean.selectedJob}"
+                                             selectionMode="single"
+                                             styleClass="table-data"
+                                >
+                                    <p:column style="width:20px;">
+                                        <f:facet name="header">STT</f:facet>
+                                        #{jobTable.rowIndex+1}
+                                    </p:column>
+                                    <p:column sortBy="#{job.career}" sortable="true">
+                                        <f:facet name="header">Nhóm ngành nghề</f:facet>
+                                        #{job.career}
+                                    </p:column>
+                                    <p:column sortBy="#{job.brightOutlook}" sortable="true">
+                                        <f:facet name="header">Nghề hot</f:facet>
+                                        <h:outputLabel value="Có" rendered="#{job.brightOutlook}"/>
+                                        <h:outputLabel value="Không" rendered="#{!job.brightOutlook}"/>
+                                    </p:column>
+                                    <p:column filterBy="#{job.name}">
+                                        <f:facet name="header">Tên nghề</f:facet>
+                                        #{job.name}
+                                    </p:column>
+                                </p:dataTable>
+                                <p:contextMenu for=":form:job-table">
+                                    <p:menuitem value="Sửa" icon="fa fa-pencil"
+                                                actionListener="#{adminBean.changeToEditJob}">
+                                    </p:menuitem>
+                                    <p:menuitem value="Thay đổi trang thái hot" icon="fa fa-pencil"
+                                                actionListener="#{adminBean.changeHotJob}" update=":form:job-table">
+                                    </p:menuitem>
+                                    <p:menuitem value="Xóa" update=":form:job-table :form:message" icon="fa fa-close"
+                                                actionListener="#{adminBean.deleteJob}">
+                                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                                    </p:menuitem>
+                                </p:contextMenu>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                                </p:confirmDialog>
+                            </p:panel>
+                            <p:panel rendered="#{adminBean.selectedMenu == adminBean.TAG}"
+                                     styleClass="panel-list">
+                                <!--<ui:include src="job-requirement-table.xhtml"/>-->
+                                <p:dataTable id="tag-table"
+                                             value="#{adminBean.tagDataModel}"
+                                             var="tag" binding="#{tagTable}"
+                                             rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                                             paginatorPosition="bottom"
+                                             lazy="true"
+                                             selection="#{adminBean.selectedTag}"
+                                             selectionMode="single"
+                                             styleClass="table-data"
+                                >
+                                    <p:column>
+                                        <f:facet name="header">STT</f:facet>
+                                        #{tagTable.rowIndex+1}
+                                    </p:column>
+                                    <p:column filterBy="#{tag.name}">
+                                        <f:facet name="header">Tên</f:facet>
+                                        #{tag.name}
+                                    </p:column>
+                                </p:dataTable>
+                                <p:contextMenu for=":form:tag-table">
+                                    <p:menuitem value="Xóa" update=":form:tag-table :form:message"
+                                                icon="fa fa-close"
+                                                actionListener="#{adminBean.deleteTag}">
+                                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                                    </p:menuitem>
+                                </p:contextMenu>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                                </p:confirmDialog>
+                            </p:panel>
+                            <p:panel rendered="#{adminBean.selectedMenu == adminBean.JOB_REQUIREMENT}"
+                                     styleClass="panel-list">
+                                <!--<ui:include src="job-requirement-table.xhtml"/>-->
+                                <p:dataTable id="requirement-table"
+                                             value="#{adminBean.requirementModel}"
+                                             var="requirement" binding="#{table2}"
+                                             rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                                             paginatorPosition="bottom"
+                                             lazy="true"
+                                             selection="#{adminBean.selectedRequirement}"
+                                             selectionMode="single"
+                                             styleClass="table-data"
+                                >
+                                    <p:column>
+                                        <f:facet name="header">STT</f:facet>
+                                        #{table2.rowIndex+1}
+                                    </p:column>
+                                    <p:column sortBy="#{requirement.group}" sortable="true">
+                                        <f:facet name="header">Nhóm</f:facet>
+                                        #{requirement.group}
+                                    </p:column>
+                                    <p:column filterBy="#{requirement.name}">
+                                        <f:facet name="header">Tên phẩm chất nghề</f:facet>
+                                        #{requirement.name}
+                                    </p:column>
+                                </p:dataTable>
+                                <p:contextMenu for=":form:requirement-table">
+                                    <p:menuitem value="Sửa" icon="fa fa-pencil"
+                                                actionListener="#{adminBean.changeToEditRequirement}">
+                                    </p:menuitem>
+                                    <p:menuitem value="Xóa" update=":form:requirement-table :form:message"
+                                                icon="fa fa-close"
+                                                actionListener="#{adminBean.deleteJobRequirement}">
+                                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                                    </p:menuitem>
+                                </p:contextMenu>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                                </p:confirmDialog>
+                            </p:panel>
+                            <p:panel rendered="#{adminBean.selectedMenu == adminBean.REQUIREMENT_GROUP}"
+                                     styleClass="panel-list">
+                                <!--<ui:include src="job-requirement-table.xhtml"/>-->
+                                <p:dataTable id="requirement-group-table"
+                                             value="#{adminBean.groupModel}"
+                                             var="group" binding="#{table3}"
+                                             rows="10"
+                                             paginator="true"
+                                             paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                                             paginatorPosition="bottom"
+                                             lazy="true"
+                                             selection="#{adminBean.selectedGroup}"
+                                             selectionMode="single"
+                                             styleClass="table-data"
+                                >
+                                    <p:column>
+                                        <f:facet name="header">STT</f:facet>
+                                        #{table3.rowIndex+1}
+                                    </p:column>
+                                    <p:column filterBy="#{group.name}">
+                                        <f:facet name="header">Tên nhóm phẩm chất nghề</f:facet>
+                                        <h:outputText value="#{group.name}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">Trạng thái</f:facet>
+                                        <h:outputText value="#{group.active ? 'Kích hoạt' : 'Không kích hoạt'}"/>
+                                    </p:column>
+                                </p:dataTable>
+                                <p:contextMenu for=":form:requirement-group-table">
+                                    <p:menuitem value="Đổi trạng thái"
+                                                update=":form:requirement-group-table :form:message"
+                                                actionListener="#{adminBean.changeActiveGroup}">
+                                    </p:menuitem>
+                                    <p:menuitem value="Sửa" icon="fa fa-pencil"
+                                                actionListener="#{adminBean.changeToEditGroup}">
+                                    </p:menuitem>
+                                    <p:menuitem value="Xóa" update=":form:requirement-group-table :form:message"
+                                                icon="fa fa-close"
+                                                actionListener="#{adminBean.deleteGroup}">
+                                        <p:confirm header="Xác nhận" message="Bạn có chắc muốn xóa "/>
+                                    </p:menuitem>
+                                </p:contextMenu>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Xóa" type="button" styleClass="ui-confirmdialog-yes"/>
+                                    <p:commandButton value="Hủy" type="button" styleClass="ui-confirmdialog-no"/>
+                                </p:confirmDialog>
+                            </p:panel>
+                        </h:form>
+                    </p:panel>
+                </p:layoutUnit>
+            </p:layout>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
+

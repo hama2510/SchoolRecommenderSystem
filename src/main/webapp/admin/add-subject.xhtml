@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:ơ="http://java.sun.com/jsf/html">
+<h:head>
+    <title>Trang quản trị</title>
+    <h:outputStylesheet library="css" name="custom-primefaces.css"/>
+    <h:outputStylesheet library="css" name="add-job.css"/>
+</h:head>
+<h:body>
+    <ui:composition template="/template/admin-template.xhtml">
+        <ui:define name="content">
+            <h:form id="form">
+                <h:outputText value="Form thêm môn học" style="ruby-align: center"/>
+                <p:growl id="msg" showDetail="true" sticky="true"/>
+                <p:panelGrid columns="2" id="panel">
+                    <h:outputLabel value="Tên môn học"/>
+                    <p:inputText value="#{addSubjectBean.subject.name}" required="true"
+                                 requiredMessage="Phải nhập tên môn học"/>
+                    <h:outputText value="Nhóm môn học:"/>
+                    <p:selectOneMenu value="#{addSubjectBean.subject.group}" style="width:250px" required="true"
+                                     requiredMessage="Phải chọn nhóm môn học">
+                        <f:selectItem itemLabel="" noSelectionOption="false"/>
+                        <f:selectItems value="#{addSubjectBean.groups}" var="group" itemLabel="#{group}"
+                                       itemValue="#{group}"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Cấp độ:"/>
+                    <p:selectOneMenu value="#{addSubjectBean.subject.type}" style="width:250px" required="true"
+                                     requiredMessage="Phải chọn cấp độ môn học">
+                        <f:selectItems value="#{addSubjectBean.types}" var="type"
+                                       itemLabel="#{type}"
+                                       itemValue="#{type}"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <p:commandButton actionListener="#{addSubjectBean.add}" update=":form:msg :form:panel"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
